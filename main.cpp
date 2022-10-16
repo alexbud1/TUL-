@@ -55,39 +55,62 @@ int main() {
         vector<Human> people;
 
         if(input_file.is_open()){
+            int counter = 0;
             while(getline(input_file, input_file_line)){
                 string word = "";
                 vector<string> words;
+                int k1 = 0;
                 for(int i = 0; i<(int)input_file_line.size(); i++){
+                cout << "k1 = " << k1 << endl;
                     if(input_file_line[i] != ' '){
                         if(input_file_line[i] != input_file_line.back()){
                             cout <<"char is " << input_file_line[i] << endl;
                             word += input_file_line[i];
                         }else{
-                            cout <<"char is " << input_file_line[i] << endl;
-                            word += input_file_line[i];
-                            cout<<"word is " << word<< endl;
-                            if(is_number(word)){
-                                Human person(words[0], words[1], words[2], stoi(word));
-                                people.push_back(person);
-                                cout << "people length is: "<< people.size()<< endl;
+                            if (words.size()!=3){
+                                cout << "Incorrect values in the line " << counter << endl;
+                                goto values_error;
+                            }else{
+                                cout <<"char is " << input_file_line[i] << endl;
+                                word += input_file_line[i];
+                                cout<<"word is " << word<< endl;
+                                if(is_number(word)){
+                                    Human person(words[0], words[1], words[2], stoi(word));
+                                    people.push_back(person);
+                                    cout << "people length is: "<< people.size()<< endl;
+                                }else{
+                                    cout << "Incorrect age in the line " << counter << endl;
+                                    goto age_error;
+                                }
                             }
                         }
                     }else{
-                        cout<<"word is " << word<< endl;
+                        if(input_file_line[i+1] == ' '){
+                            continue;
+                        }else{
+                            if (k1 == 2){
+                            if(!validate_sex(word)){
+                                cout << "Incorrect sex in the line " << counter + 1  << endl;
+                                goto sex_error;
+                            }else{
+                                cout<<"word is " << word<< endl;
+                                words.push_back(word);
+                                word = "";
+                            }
+                        }else{
+                            cout<<"word is " << word<< endl;
                             words.push_back(word);
-                        word = "";
+                            word = "";
+                        }
+
+                        k1+=1;
+                        }
+
                     }
                 }
-                 for (auto & element : words) {
-                    cout << element << endl;
-                }
-                cout << input_file_line << endl;
+                k+=1;
             }
             input_file.close();
-            cout << "Lets check"<< endl;
-            cout << people.size()<< endl;
-            cout << is_number("er") << endl;
             for(int i=0; i < people.size(); i++){
                 cout << people[i].FirstName << " " << people[i].LastName << " " << people[i].sex << " " << people[i].age << endl;
             }
@@ -281,7 +304,7 @@ int main() {
                                                 }
                                                 myfile.close();
                                                 cout << "Success" << endl;
-                                                break;
+                                                goto pass;
 
                                             }else{
                                                 cout << "Unable to open the file!" << endl;
@@ -338,5 +361,15 @@ int main() {
         }
 
     }
-    return 0;
+    values_error:
+        return 0;
+
+    age_error:
+        return 0;
+
+    sex_error:
+        return 0;
+
+    pass:
+        return 0;
 }
