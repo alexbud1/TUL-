@@ -43,8 +43,8 @@ int main() {
             cout << "Please enter file name" << endl;
         }
         string file;
-        cin >> file;
-//        cout << "Your file name will be: "<< file << endl;
+        getline(cin, file);
+
         if(file == "exit"){
             break;
         }
@@ -61,78 +61,82 @@ int main() {
                 vector<string> words;
                 int k1 = 0;
                 for(int i = 0; i<(int)input_file_line.size(); i++){
-                cout << "k1 = " << k1 << endl;
                     if(input_file_line[i] != ' '){
                         if(input_file_line[i] != input_file_line.back()){
-                            cout <<"char is " << input_file_line[i] << endl;
                             word += input_file_line[i];
                         }else{
                             if (words.size()!=3){
-                                cout << "Incorrect values in the line " << counter << endl;
+                                cout << "Incorrect values in the line " << counter + 1<< endl;
                                 goto values_error;
                             }else{
-                                cout <<"char is " << input_file_line[i] << endl;
                                 word += input_file_line[i];
-                                cout<<"word is " << word<< endl;
                                 if(is_number(word)){
                                     Human person(words[0], words[1], words[2], stoi(word));
                                     people.push_back(person);
-                                    cout << "people length is: "<< people.size()<< endl;
                                 }else{
-                                    cout << "Incorrect age in the line " << counter << endl;
+                                    cout << "Incorrect age in the line " << counter + 1<< endl;
                                     goto age_error;
                                 }
                             }
                         }
-                    }else{
-                        if(input_file_line[i+1] == ' '){
-                            continue;
                         }else{
-                            if (k1 == 2){
-                            if(!validate_sex(word)){
-                                cout << "Incorrect sex in the line " << counter + 1  << endl;
-                                goto sex_error;
+                            if(input_file_line[i+1] == ' '){
+                                continue;
                             }else{
-                                cout<<"word is " << word<< endl;
-                                words.push_back(word);
-                                word = "";
+                                if (k1 == 2){
+                                    if(!validate_sex(word)){
+                                        cout << "Incorrect sex in the line " << counter + 1  << endl;
+                                        goto sex_error;
+                                    }else{
+                                        words.push_back(word);
+                                        word = "";
+                                    }
+                                }else{
+                                    words.push_back(word);
+                                    word = "";
+                                }
+                                k1+=1;
                             }
-                        }else{
-                            cout<<"word is " << word<< endl;
-                            words.push_back(word);
-                            word = "";
                         }
-
-                        k1+=1;
-                        }
-
                     }
+                    values_error:
+                        k+=1;
+
+                    age_error:
+                        k+=1;
+
+                    sex_error:
+                        k+=1;
+                    k+=1;
+                    counter++;
                 }
-                k+=1;
-            }
-            input_file.close();
-            for(int i=0; i < people.size(); i++){
-                cout << people[i].FirstName << " " << people[i].LastName << " " << people[i].sex << " " << people[i].age << endl;
-            }
-            cout << "If you want to create new object - print ADD"<< endl;
-            cout << "If you want to delete certain object - print DELETE"<< endl;
-            cout << "If you want to change certain object - print EDIT"<< endl;
-            cout << "If you don't want to do any changes - print PASS"<< endl;
+                input_file.close();
+
             while (true){
+            another_action:
+                cout << endl;
+                cout << "The vector now looks this way :\n" << endl;
+                for(int i=0; i < people.size(); i++){
+                    cout << people[i].FirstName << " " << people[i].LastName << " " << people[i].sex << " " << people[i].age << endl;
+                }
+                cout << "\nIf you want to create new object - print ADD"<< endl;
+                cout << "If you want to delete certain object - print DELETE"<< endl;
+                cout << "If you want to change certain object - print EDIT"<< endl;
+                cout << "If you don't want to do any changes - print PASS"<< endl;
                 string action;
-                cin >> action;
+                getline(cin, action);
                 if(action == "ADD"){
-                    cout << "In order to ADD new object you should enter such fields as First Name, Second Name, Sex and Age. Let's start from First Name: "<< endl;
-                    string FirstName;
-                    cin >> FirstName;
-                    cout << "Now enter Last Name : " << endl;
+                    cout << "\nIn order to ADD new object you should enter such fields as First Name, Last Name, Sex and Age. Let's start from First Name: "<< endl;
+                    string FirstName = "";
+                    getline(cin, FirstName);
+                    if (FirstName!=""){
+                        cout << "Now enter Last Name : " << endl;
                     string LastName;
-                    cin >> LastName;
+                    getline(cin, LastName);
                     cout << "Now enter Sex ( Male or Female) : " << endl;
                     string Sex;
                     while(true){
-
-                        cin >> Sex;
+                        getline(cin, Sex);
                         if (validate_sex(Sex)){
                             break;
                         }else{
@@ -140,54 +144,35 @@ int main() {
                         }
                     }
                     cout << "Now enter age (it should be an integer number) : " << endl;
+                     edit_age_error:
                     string age;
                     while(true){
-
-                        cin >> age;
-                        if (is_number(age)){
-                            break;
-                        }else{
-                            cout << "Please enter valid age (an integer number) : " << endl;
+                        getline(cin, age);
+                        if(age!=""){
+                            cout << "Age = " << age << endl;
+                            if(is_number(age)){
+                                break;
+                            }else{
+                                cout << "Please enter valid name" << endl;
+                            }
                         }
                     }
                     cout << "Your object is : " << FirstName << " " << LastName << " " << Sex << " " << age << endl;
                     Human person(FirstName, LastName, Sex, stoi(age));
                     people.push_back(person);
-                    cout << "Now vector looks this way : " << endl;
-                    for(int i=0; i < people.size(); i++){
-                        cout << people[i].FirstName << " " << people[i].LastName << " " << people[i].sex << " " << people[i].age << endl;
+                    cout << "You added new object."<< endl;
                     }
-                    cout << "You added new object.  Now please enter the name of output file : "<< endl;
-                    while(true){
-                        string output_file;
-                        cin >> output_file;
-                        ofstream myfile;
-                        myfile.open(output_file);
-                        if(myfile.is_open()){
 
-                            for(int i=0; i < people.size(); i++){
-                                myfile << people[i].FirstName << " " << people[i].LastName << " " << people[i].sex << " " << people[i].age << endl;
-                            }
-                            myfile.close();
-                            cout << "Success" << endl;
-                            break;
-
-                        }else{
-                            cout << "Unable to open the file!" << endl;
-                            cout << "Try to enter valid file name or print exit to quit" << endl;
-                        }
-                    }
-                    break;
                 }
                 else if(action == "DELETE"){
-                    cout << "In order to delete object you should specify index of object to delete. Here are objects and its id's: "<< endl;
+                    cout << "\nIn order to delete object you should specify index of object to delete. Here are objects and its id's: "<< endl;
                     for(int i=0; i < people.size(); i++){
                         cout << "ID = "<< i << " "<< people[i].FirstName << " " << people[i].LastName << " " << people[i].sex << " " << people[i].age << endl;
                     }
                     cout << "Enter the id of object you want to delete. It should be an integer number" << endl;
                     while (true){
                         string id;
-                        cin >> id;
+                        getline(cin, id);
                         if(is_number(id)){
                             if(stoi(id) < people.size()){
                                 cout << "Here is your object : " << "ID = "<< stoi(id) << " "<< people[stoi(id)].FirstName << " " << people[stoi(id)].LastName << " " << people[stoi(id)].sex << " " <<
@@ -202,25 +187,6 @@ int main() {
                                     for(int i=0; i < people.size(); i++){
                                         cout << "ID = "<< i << " "<< people[i].FirstName << " " << people[i].LastName << " " << people[i].sex << " " << people[i].age << endl;
                                     }
-                                    while(true){
-                                        cout << "You have just deleted an object.  Now please enter the name of output file : "<< endl;
-                                        string output_file_name;
-                                        cin >> output_file_name;
-                                        ofstream myfile(output_file_name);
-
-                                        if(myfile.is_open()){
-                                            for(int i=0; i < people.size(); i++){
-                                                myfile << people[i].FirstName << " " << people[i].LastName << " " << people[i].sex << " " << people[i].age << endl;
-                                            }
-                                            myfile.close();
-                                            cout << "Success" << endl;
-                                            break;
-
-                                        }else{
-                                            cout << "Unable to open the file!" << endl;
-                                            cout << "Try to enter valid file name or print exit to quit" << endl;
-                                        }
-                                    }
                                     break;
                                 }else{
                                     cout << "Action canceled" << endl;
@@ -233,16 +199,15 @@ int main() {
                             cout << "Please enter an integer value" << endl;
                         }
                     }
-                    break;
                 }
                 else if(action == "EDIT"){
-                    cout << "In order to edit certain object - you should enter an id of the object you want to edit ( it should be an integer value ) : "<< endl;
+                    cout << "\nIn order to edit certain object - you should enter an id of the object you want to edit ( it should be an integer value ) : "<< endl;
                     for(int i=0; i < people.size(); i++){
                         cout << "ID = "<< i << " "<< people[i].FirstName << " " << people[i].LastName << " " << people[i].sex << " " << people[i].age << endl;
                     }
                     while (true){
                         string id;
-                        cin >> id;
+                        getline(cin, id);
                         if(is_number(id)){
                             if(stoi(id) < people.size()){
                                 cout << "Here is your object : " << "ID = "<< stoi(id) << " "<< people[stoi(id)].FirstName << " " << people[stoi(id)].LastName << " " << people[stoi(id)].sex << " " <<
@@ -250,24 +215,24 @@ int main() {
                                 while(true){
                                     cout << "Now choose the field you want to edit :\nL - for Last Name\nF - for First Name\nS - for Sex\nA - for Age\nEnter PASS to finish editing" << endl;
                                     string value;
-                                    cin >> value;
+                                    getline(cin, value);
                                     if(value == "L"){
                                         cout << "Enter Last Name you want to put instead of previous one" << endl;
                                         string LastName;
-                                        cin >> LastName;
+                                        getline(cin, LastName);
                                         people[stoi(id)].LastName = LastName;
                                     }
                                     else if(value == "F"){
                                         cout << "Enter First Name you want to put instead of previous one" << endl;
                                         string FirstName;
-                                        cin >> FirstName;
+                                        getline(cin, FirstName);
                                         people[stoi(id)].FirstName = FirstName;
                                     }
                                     else if(value == "S"){
                                         cout << "Enter Sex you want to put instead of previous one (Male or Female)" << endl;
                                         string Sex;
                                         while(true){
-                                            cin >> Sex;
+                                            getline(cin, Sex);
                                             if (validate_sex(Sex)){
                                                 people[stoi(id)].sex = Sex;
                                                 break;
@@ -278,40 +243,28 @@ int main() {
                                     }
                                     else if(value == "A"){
                                         cout << "Enter Age you want to put instead of previous one" << endl;
-                                        string Age;
+                                        string Age = "";
+
                                         while(true){
-                                            cin >> Age;
-                                            if (is_number(Age)){
-                                                people[stoi(id)].age = stoi(Age);
-                                                break;
-                                            }else{
-                                                cout << "Please enter valid age (an integer number) : " << endl;
+                                            getline(cin, Age);
+                                            if(Age!=""){
+                                                cout << "Age = " << Age << endl;
+
+                                                if(is_number(Age)){
+                                                    people[stoi(id)].age = stoi(Age);
+                                                    break;
+                                                }else{
+                                                    cout << "Please enter valid name" << endl;
+                                                }
                                             }
                                         }
+
                                     }
                                     else if(value == "PASS"){
                                         cout << "Now object looks this way : " << endl;
                                         cout << "ID = "<< stoi(id) << " "<< people[stoi(id)].FirstName << " " << people[stoi(id)].LastName << " " << people[stoi(id)].sex << " " << people[stoi(id)].age << endl;
-                                        while(true){
-                                            cout << "You have just edited an object.  Now please enter the name of output file : "<< endl;
-                                            string output_file_name;
-                                            cin >> output_file_name;
-                                            ofstream myfile(output_file_name);
-
-                                            if(myfile.is_open()){
-                                                for(int i=0; i < people.size(); i++){
-                                                    myfile << people[i].FirstName << " " << people[i].LastName << " " << people[i].sex << " " << people[i].age << endl;
-                                                }
-                                                myfile.close();
-                                                cout << "Success" << endl;
-                                                goto pass;
-
-                                            }else{
-                                                cout << "Unable to open the file!" << endl;
-                                                cout << "Try to enter valid file name or print exit to quit" << endl;
-                                            }
-                                        }
-                                        break;
+                                        cout << "You have just edited an object.\n"<< endl;
+                                        goto another_action;
                                     }
                                     else{
                                         cout << "Incorrect value selected, please try again" << endl;
@@ -323,14 +276,15 @@ int main() {
                         }else{
                             cout << "Please enter an integer value" << endl;
                         }
+//                        break;
                     }
-                    break;
+//                    break;
                 }
                 else if(action == "PASS"){
                     while(true){
                         cout << "You skipped all the editing operations.  Now please enter the name of output file : "<< endl;
                         string output_file_name;
-                        cin >> output_file_name;
+                        getline(cin, output_file_name);
                         ofstream myfile(output_file_name);
 
                         if(myfile.is_open()){
@@ -361,15 +315,10 @@ int main() {
         }
 
     }
-    values_error:
-        return 0;
 
-    age_error:
-        return 0;
-
-    sex_error:
-        return 0;
 
     pass:
         return 0;
+
+    return 0;
 }
